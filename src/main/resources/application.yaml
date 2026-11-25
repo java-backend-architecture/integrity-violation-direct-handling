@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: integrity-violation-direct-handling
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      schema-locations: classpath:db/schema.sql
+      mode: always
+  web:
+    locale: en
+    locale-resolver: fixed
+  mvc:
+    problemdetails:
+      enabled: true
+logging:
+  exception-conversion-word: "%wEx{full, org.apache, jakarta.servlet, org.springframework.web, org.springframework.aop, org.springframework.cglib, java.lang.reflect, jdk.internal}"
