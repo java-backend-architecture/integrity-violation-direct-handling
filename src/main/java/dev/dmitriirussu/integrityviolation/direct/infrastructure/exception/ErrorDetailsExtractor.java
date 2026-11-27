@@ -1,6 +1,5 @@
 package dev.dmitriirussu.integrityviolation.direct.infrastructure.exception;
 
-
 import org.postgresql.util.PSQLException;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.dao.DataAccessException;

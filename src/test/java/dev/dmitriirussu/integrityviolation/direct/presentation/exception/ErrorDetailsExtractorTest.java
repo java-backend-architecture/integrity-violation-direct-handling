@@ -35,4 +35,3 @@ class ErrorDetailsExtractorTest {
         assertThat(details).isEqualTo(new ErrorDetailsExtractor.Details("unknown", "unknown", "unknown"));
     }
 }
-

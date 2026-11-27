@@ -1,12 +1,13 @@
 package dev.dmitriirussu.integrityviolation.direct.presentation.exception;
 
+import dev.dmitriirussu.integrityviolation.direct.infrastructure.exception.ErrorDetailsExtractor;
 import dev.dmitriirussu.integrityviolation.direct.infrastructure.exception.IntegrityPolicy;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ReasonTest {
+class IntegrityPolicyTest {
 
     @ParameterizedTest(name = "{0} / {1} / {2} -> {3}")
     @CsvSource({
@@ -37,5 +38,12 @@ class ReasonTest {
     ) {
         assertThat(IntegrityPolicy.reason(state, constraint, column))
                 .isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"23505, true", "23514, false", "unknown, false"})
+    void isDuplicateRecognizesOnlyUniqueViolation(String state, boolean expected) {
+        var d = new ErrorDetailsExtractor.Details(state, "unknown", "unknown");
+        assertThat(IntegrityPolicy.isDuplicate(d)).isEqualTo(expected);
     }
 }

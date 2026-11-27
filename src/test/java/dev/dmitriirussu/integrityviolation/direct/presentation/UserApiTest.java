@@ -13,6 +13,11 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc; 
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -41,7 +46,7 @@ class UserApiTest {
 
     @Test
     void createReturnsIdAndNormalizesInput() throws Exception {
-        // trim имени и lowercase email делает DTO, trim ещё раз делает SQL
+        // trim имени и lowercase email делает DTO
         var body = post(json("  ann  ", "  ANN@MAIL.RU  "))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
@@ -133,6 +138,10 @@ class UserApiTest {
                 .contains("event=db_integrity_violation")
                 .contains("reason=validation_schema_mismatch")
                 .contains("constraint=ck_users_name_length");
+        post(json("\\uD83D\\uDE00", "emo@mail.ru"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.detail").value("Internal error"))
+                .andExpect(content().string(not(containsString("ck_users"))));
     }
 
     // Страховка от главной ловушки: общий @ExceptionHandler(Exception.class) не должен

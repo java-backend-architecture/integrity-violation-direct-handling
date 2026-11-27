@@ -45,5 +45,8 @@ public final class IntegrityPolicy {
             default -> "integrity_violation";
         };
     }
-}
 
+    public static boolean isDuplicate(ErrorDetailsExtractor.Details d) {
+        return "23505".equals(d.sqlState());
+    }
+}

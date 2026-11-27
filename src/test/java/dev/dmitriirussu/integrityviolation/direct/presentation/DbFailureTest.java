@@ -54,17 +54,6 @@ class DbFailureTest {
                 .andExpect(content().string(not(containsString("boom"))));
     }
 
-    // Решает SQLState 23505, а не тип исключения
-    @Test
-    void uniqueViolationInPlainIntegrityExceptionIs409() throws Exception {
-        when(repository.create(any(), any()))
-                .thenThrow(new DataIntegrityViolationException("dup", new SQLException("dup", "23505")));
-
-        mvc.perform(post())
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.detail").value("Resource already exists"));
-    }
-
     private static org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder post() {
         return MockMvcRequestBuilders.post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON).content(VALID);

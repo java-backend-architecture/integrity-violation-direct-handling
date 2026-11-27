@@ -34,10 +34,12 @@ class ConstraintNameTest {
     // и падает на UNIQUE. Это проверка нормализации приложения, а не CHECK в БД.
     @ParameterizedTest(name = "name={0}, email={1} -> {2}")
     @CsvSource({
-            "jack, bob@mail.ru,  uq_users_name",
-            "bob,  JACK@mail.ru, uq_users_email",
-            "a,    bob@mail.ru,  ck_users_name_length",
-            "bob,  b@mail.ru,    ck_users_email_length"
+            "jack,   bob@mail.ru,   uq_users_name",
+            "bob,    JACK@mail.ru,  uq_users_email",
+            "a,      bob@mail.ru,   ck_users_name_length",
+            "abcdef, bob@mail.ru,   ck_users_name_length",
+            "bob,    b@mail.ru,     ck_users_email_length",
+            "bob,    bobby@mail.ru, ck_users_email_length"
     })
     void violationReportsItsConstraintName(String name, String email, String expected) {
         var e = assertThrows(DataAccessException.class,
@@ -61,6 +63,7 @@ class ConstraintNameTest {
         var details = ErrorDetailsExtractor.extract(e);
 
         assertThat(details.sqlState()).isEqualTo("23502");
+        assertThat(details.constraint()).isEqualTo("unknown");
         assertThat(details.column()).isEqualTo(expected);
     }
 
