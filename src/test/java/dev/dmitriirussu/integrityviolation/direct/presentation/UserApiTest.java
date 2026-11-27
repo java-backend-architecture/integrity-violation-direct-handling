@@ -133,15 +133,12 @@ class UserApiTest {
     void validationAndSchemaMismatchGoesToIntegrityHandler(CapturedOutput output) throws Exception {
         post(json("\\uD83D\\uDE00", "emo@mail.ru")) // JSON-эскейп суррогатной пары
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.detail").value("Internal error"));
+                .andExpect(jsonPath("$.detail").value("Internal error"))
+                .andExpect(content().string(not(containsString("ck_users"))));
         assertThat(output)
                 .contains("event=db_integrity_violation")
                 .contains("reason=validation_schema_mismatch")
                 .contains("constraint=ck_users_name_length");
-        post(json("\\uD83D\\uDE00", "emo@mail.ru"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.detail").value("Internal error"))
-                .andExpect(content().string(not(containsString("ck_users"))));
     }
 
     // Страховка от главной ловушки: общий @ExceptionHandler(Exception.class) не должен

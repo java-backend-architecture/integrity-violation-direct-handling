@@ -43,7 +43,6 @@ class IntegrityPolicyTest {
     @ParameterizedTest
     @CsvSource({"23505, true", "23514, false", "unknown, false"})
     void isDuplicateRecognizesOnlyUniqueViolation(String state, boolean expected) {
-        var d = new ErrorDetailsExtractor.Details(state, "unknown", "unknown");
-        assertThat(IntegrityPolicy.isDuplicate(d)).isEqualTo(expected);
+        assertThat(IntegrityPolicy.isDuplicate(state)).isEqualTo(expected);
     }
 }

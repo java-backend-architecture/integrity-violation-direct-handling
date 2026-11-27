@@ -46,7 +46,8 @@ public final class IntegrityPolicy {
         };
     }
 
-    public static boolean isDuplicate(ErrorDetailsExtractor.Details d) {
-        return "23505".equals(d.sqlState());
+    // 23505 = unique_violation
+    public static boolean isDuplicate(String sqlState) {
+        return "23505".equals(sqlState);
     }
 }

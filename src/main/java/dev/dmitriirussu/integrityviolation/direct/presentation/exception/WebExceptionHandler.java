@@ -25,13 +25,13 @@ public class WebExceptionHandler extends ResponseEntityExceptionHandler {
         var constraint = details.constraint();
         var column = details.column();
 
-        if (IntegrityPolicy.isDuplicate(details)) {
+        if (IntegrityPolicy.isDuplicate(state)) {
             log.info(
                     "event=duplicate_key method={} path={} constraint={}",
-                    req.getMethod(), req.getRequestURI(), details.constraint()
+                    req.getMethod(), req.getRequestURI(), constraint
             );
 
-            var label = IntegrityPolicy.duplicateLabel(details.constraint());
+            var label = IntegrityPolicy.duplicateLabel(constraint);
             return ProblemDetail.forStatusAndDetail(
                     HttpStatus.CONFLICT, label + " already exists"
             );
@@ -41,7 +41,7 @@ public class WebExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error(
                 "event=db_integrity_violation reason={} sqlstate={} method={} path={} constraint={} column={}",
-                reason, state, req.getMethod(), req.getRequestURI(), constraint, column, e
+                reason, state, req.getMethod(), req.getRequestURI(), constraint, column
         );
 
         return ProblemDetail.forStatusAndDetail(

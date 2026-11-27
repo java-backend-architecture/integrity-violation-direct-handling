@@ -42,4 +42,16 @@ class WebExceptionHandlerTest {
                 .contains("reason=integrity_violation")
                 .contains("sqlstate=23503");
     }
+
+    @Test
+    void integrityViolationDoesNotLeakRowValuesToLog(CapturedOutput output) {
+        var e = new DataIntegrityViolationException("check",
+                new SQLException("Failing row contains (secret@mail.ru)", "23514"));
+
+        handler.integrity(e, req);
+
+        assertThat(output)
+                .contains("event=db_integrity_violation")
+                .doesNotContain("secret@mail.ru");
+    }
 }
